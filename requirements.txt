@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+yt-dlp @ git+https://github.com/yt-dlp/yt-dlp.git
+pydantic
+python-jose[cryptography]
+httpx
+cachetools
+curl_cffi==0.5.10
+yt-dlp-get-pot
+playwright
