@@ -255,6 +255,7 @@ def get_info(url: str) -> dict:
     # RETRY LOOP FOR IP BLOCK / CAPTCHA (Max 2 attempts)
     # ════════════════════════════════════════════════════════════════════════
     max_retries = 2
+    result = {'type': 'error', 'message': 'Initialization failed'}
     for attempt in range(max_retries):
         opts, cookie_path = _make_opts()
         try:
@@ -281,9 +282,10 @@ def get_info(url: str) -> dict:
                 
         except Exception as exc:
             error_msg = str(exc)
+            result = {'type': 'error', 'message': error_msg}
             print(f"[ENGINE] Attempt {attempt+1} failed for {url!r}: {error_msg}")
             # If YouTube asks to sign in or detects bot, refresh cookies and retry
-            if attempt < max_retries - 1 and any(key in error_msg.lower() for key in ('sign in', 'bot', '403', 'verify')):
+            if attempt < max_retries - 1 and any(key in error_msg.lower() for key in ('sign in', 'bot', '403', 'verify', 'failed to extract any player response')):
                 print("[ENGINE] Refreshing cookies via Playwright...")
                 try:
                     subprocess.run(["python", "fetch_cookies.py"], check=True)
