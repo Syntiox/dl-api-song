@@ -1,4 +1,4 @@
-import yt_dlp
+﻿import yt_dlp
 import os
 import shutil
 import subprocess
@@ -18,11 +18,11 @@ _COMMON_OPTS = {
     'format': 'all',
     'js_runtimes': {'node': {}},
     'impersonate': yt_dlp.networking.impersonate.ImpersonateTarget(client='chrome'),
-    # ── Network stability ────────────────────────────────────────────────────
+    # ΓöÇΓöÇ Network stability ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     'socket_timeout': 30,      # idle socket timeout (seconds)
     'retries': 10,             # retry on transient network errors
     'fragment_retries': 10,    # retry on fragment errors (HLS/DASH)
-    # ── Playlist safety cap ──────────────────────────────────────────────────
+    # ΓöÇΓöÇ Playlist safety cap ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     'playlistend': 100,        # max 100 entries per playlist fetch
 }
 
@@ -34,22 +34,22 @@ def _get_youtube_args() -> dict:
     """
     Build yt-dlp extractor args for YouTube.
     
-    Strategy (best → fallback):
-      1. tv_embedded client  → no PO token required, bypasses bot detection
-      2. bgutil POT server   → auto-generates PO tokens (needs bgutil running)
-      3. POT_PROVIDER_URL    → external PO token REST API
-      4. YT_PO_TOKEN env var → manual static PO token
+    Strategy (best ΓåÆ fallback):
+      1. tv_embedded client  ΓåÆ no PO token required, bypasses bot detection
+      2. bgutil POT server   ΓåÆ auto-generates PO tokens (needs bgutil running)
+      3. POT_PROVIDER_URL    ΓåÆ external PO token REST API
+      4. YT_PO_TOKEN env var ΓåÆ manual static PO token
     
     tv_embedded is the most reliable for server/datacenter IPs.
     """
-    # ── Player clients: let yt-dlp use its own default selection ──────────────
-    # DO NOT set player_client here — yt-dlp's default picks the best clients
+    # ΓöÇΓöÇ Player clients: let yt-dlp use its own default selection ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # DO NOT set player_client here ΓÇö yt-dlp's default picks the best clients
     # automatically and returns the most formats (including 1080p, 4K, etc.)
     # Forcing a specific client (e.g. tv_embedded) limits available formats.
     # tv_embedded client works on datacenter IPs (no PO token required)
     yt_args: dict = {'player_client': ['tv_embedded', 'web']}
 
-    # ── PO Token from remote provider URL ──
+    # ΓöÇΓöÇ PO Token from remote provider URL ΓöÇΓöÇ
     provider_url = os.environ.get("POT_PROVIDER_URL")
     if provider_url:
         try:
@@ -66,7 +66,7 @@ def _get_youtube_args() -> dict:
         except Exception as e:
             print(f"[ENGINE POT ERROR] Failed to fetch from {provider_url}: {e}")
 
-    # ── Fallback: direct env vars ──
+    # ΓöÇΓöÇ Fallback: direct env vars ΓöÇΓöÇ
     if 'po_token' not in yt_args and os.environ.get("YT_PO_TOKEN"):
         yt_args['po_token'] = os.environ.get("YT_PO_TOKEN")
         print("[ENGINE POT] Using YT_PO_TOKEN from environment")
@@ -125,7 +125,7 @@ def _get_best_audio(info: dict) -> dict:
         raw = best_audio.get('url') or best_audio.get('manifest_url', '')
         return {
             'url':          raw,
-            'direct_url':   raw,   # raw CDN URL — expose to trusted callers
+            'direct_url':   raw,   # raw CDN URL ΓÇö expose to trusted callers
             'cookies':      best_audio.get('cookies') or info.get('cookies'),
             'http_headers': best_audio.get('http_headers') or info.get('http_headers'),
             'ext':          best_audio.get('ext'),
@@ -140,7 +140,7 @@ def check_ffmpeg() -> bool:
     """Return True if ffmpeg is available on this machine."""
     return shutil.which('ffmpeg') is not None or os.path.exists('ffmpeg.exe')
 
-# ── Helper: build the result dict from an info dict ──────────────────────────
+# ΓöÇΓöÇ Helper: build the result dict from an info dict ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 def _build_audio_result(src: dict) -> dict:
     return {
         'type':            'audio',
@@ -158,7 +158,7 @@ def _build_audio_result(src: dict) -> dict:
         'formats':         _extract_formats(src),
     }
 
-# ── Helper: run yt-dlp extract_info with given opts ──────────────────────────
+# ΓöÇΓöÇ Helper: run yt-dlp extract_info with given opts ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 def _run_extract(url: str, opts: dict, cookie_path: str | None):
     """Run yt-dlp extract_info and return (info_dict, cookie_path)."""
     try:
@@ -182,7 +182,7 @@ def get_info(url: str) -> dict:
 
     is_search = url.startswith('ytsearch')
 
-    # ── Build opts with given yt extractor args ───────────────────────────────
+    # ΓöÇΓöÇ Build opts with given yt extractor args ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     def _make_opts(extra_yt_args: dict | None = None) -> tuple[dict, str | None]:
         """Returns (opts_dict, temp_cookie_path_or_None)."""
         yt_args = _get_youtube_args()
@@ -205,7 +205,7 @@ def get_info(url: str) -> dict:
             'extractor_args': extractor_args,
         }
 
-        # ── Cookies ──────────────────────────────────────────────────────────
+        # ΓöÇΓöÇ Cookies ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
         c_path = None
         if os.path.exists("cookies.txt"):
             o['cookiefile'] = "cookies.txt"
@@ -232,7 +232,7 @@ def get_info(url: str) -> dict:
 
         return o, c_path
 
-    # ── Parse yt-dlp info dict → result dict ─────────────────────────────────
+    # ΓöÇΓöÇ Parse yt-dlp info dict ΓåÆ result dict ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     def _parse_info(info: dict) -> dict:
         if 'entries' in info:
             entries = list(info['entries'])
@@ -252,9 +252,9 @@ def get_info(url: str) -> dict:
         else:
             return _build_audio_result(info)
 
-    # ════════════════════════════════════════════════════════════════════════
+    # ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
     # RETRY LOOP FOR IP BLOCK / CAPTCHA (Max 2 attempts)
-    # ════════════════════════════════════════════════════════════════════════
+    # ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
     max_retries = 2
     result = {'type': 'error', 'message': 'Initialization failed'}
     for attempt in range(max_retries):
@@ -268,7 +268,7 @@ def get_info(url: str) -> dict:
             formats_empty = is_youtube and result.get('type') == 'video' and not result.get('formats')
 
             if not formats_empty:
-                return result  # ✅ Primary succeeded with formats
+                return result  # Γ£à Primary succeeded with formats
             
             # If formats_empty, maybe try fallback chain BEFORE doing Playwright (optional), 
             # but usually formats_empty means datacenter IP blocked, so refreshing cookies is better.
@@ -281,7 +281,7 @@ def get_info(url: str) -> dict:
                     print(f"[ENGINE COOKIE FETCH ERROR] {e}")
                 continue
             else:
-                # Last attempt, empty formats → fall through to fallback chain
+                # Last attempt, empty formats ΓåÆ fall through to fallback chain
                 break
                 
         except Exception as exc:
@@ -302,40 +302,40 @@ def get_info(url: str) -> dict:
                 print(f"[ENGINE] Primary extraction failed completely with error. Falling back...")
                 break
 
-        # ════════════════════════════════════════════════════════════════════
-        # FALLBACK CHAIN — tries multiple client strategies when primary fails
-        # Only runs when primary (with Playwright retries) still returns 0 formats.
-        # ════════════════════════════════════════════════════════════════════
-        print("[ENGINE FALLBACK] Primary returned 0 formats after all retries — trying fallback client chain")
+    # ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+    # FALLBACK CHAIN ΓÇö tries multiple client strategies when primary fails
+    # Only runs when primary (with Playwright retries) still returns 0 formats.
+    # ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+    print("[ENGINE FALLBACK] Primary returned 0 formats after all retries ΓÇö trying fallback client chain")
 
-        FALLBACK_STRATEGIES = [
-            {'player_client': ['tv_embedded', 'tv']},
-            {'player_client': ['android', 'mweb', 'ios']},
-            {'player_client': ['android_vr', 'web_creator']},
-        ]
+    FALLBACK_STRATEGIES = [
+        {'player_client': ['tv_embedded', 'tv']},
+        {'player_client': ['android', 'mweb', 'ios']},
+        {'player_client': ['android_vr', 'web_creator']},
+    ]
 
-        for i, strategy in enumerate(FALLBACK_STRATEGIES, 1):
-            print(f"[ENGINE FALLBACK] Trying strategy {i}/{len(FALLBACK_STRATEGIES)}: {strategy['player_client']}")
-            try:
-                fb_opts, fb_cookie_path = _make_opts(strategy)
-                fb_info   = _run_extract(url, fb_opts, fb_cookie_path)
-                fb_result = _parse_info(fb_info)
-                if fb_result.get('type') != 'error' and fb_result.get('formats'):
-                    print(f"[ENGINE FALLBACK] Strategy {i} got {len(fb_result['formats'])} formats ✅")
-                    
-                    if result.get('type') == 'video':
-                        # Merge if primary had metadata but no formats
-                        result['formats']    = fb_result['formats']
-                        result['best_video'] = fb_result.get('best_video') or result.get('best_video')
-                        result['best_audio'] = fb_result.get('best_audio') or result.get('best_audio')
-                        result['_fallback']  = True
-                        return result
-                    else:
-                        # Primary had an exception, return fallback result directly
-                        fb_result['_fallback'] = True
-                        return fb_result
-            except Exception as fb_exc:
-                print(f"[ENGINE FALLBACK] Strategy {i} error: {fb_exc}")
+    for i, strategy in enumerate(FALLBACK_STRATEGIES, 1):
+        print(f"[ENGINE FALLBACK] Trying strategy {i}/{len(FALLBACK_STRATEGIES)}: {strategy['player_client']}")
+        try:
+            fb_opts, fb_cookie_path = _make_opts(strategy)
+            fb_info   = _run_extract(url, fb_opts, fb_cookie_path)
+            fb_result = _parse_info(fb_info)
+            if fb_result.get('type') != 'error' and fb_result.get('formats'):
+                print(f"[ENGINE FALLBACK] Strategy {i} got {len(fb_result['formats'])} formats Γ£à")
+                
+                if result.get('type') == 'video':
+                    # Merge if primary had metadata but no formats
+                    result['formats']    = fb_result['formats']
+                    result['best_video'] = fb_result.get('best_video') or result.get('best_video')
+                    result['best_audio'] = fb_result.get('best_audio') or result.get('best_audio')
+                    result['_fallback']  = True
+                    return result
+                else:
+                    # Primary had an exception, return fallback result directly
+                    fb_result['_fallback'] = True
+                    return fb_result
+        except Exception as fb_exc:
+            print(f"[ENGINE FALLBACK] Strategy {i} error: {fb_exc}")
 
-        print("[ENGINE FALLBACK] All fallback strategies exhausted ❌")
-        return result or {'type': 'error', 'message': 'All extraction strategies failed. YouTube is blocking this server IP.'}
+    print("[ENGINE FALLBACK] All fallback strategies exhausted Γ¥î")
+    return result or {'type': 'error', 'message': 'All extraction strategies failed. YouTube is blocking this server IP.'}
