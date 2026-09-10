@@ -295,7 +295,8 @@ def get_info(url: str) -> dict:
             
             # If we reach here, it's the last attempt or an unrecoverable error
             if attempt == max_retries - 1:
-                return {'type': 'error', 'message': error_msg}
+                print(f"[ENGINE] Primary extraction failed completely with error. Falling back...")
+                break
 
         # ════════════════════════════════════════════════════════════════════
         # FALLBACK CHAIN — tries multiple client strategies when primary fails
@@ -315,13 +316,20 @@ def get_info(url: str) -> dict:
                 fb_opts, fb_cookie_path = _make_opts(strategy)
                 fb_info   = _run_extract(url, fb_opts, fb_cookie_path)
                 fb_result = _parse_info(fb_info)
-                if fb_result.get('formats'):
+                if fb_result.get('type') != 'error' and fb_result.get('formats'):
                     print(f"[ENGINE FALLBACK] Strategy {i} got {len(fb_result['formats'])} formats ✅")
-                    result['formats']    = fb_result['formats']
-                    result['best_video'] = fb_result.get('best_video') or result.get('best_video')
-                    result['best_audio'] = fb_result.get('best_audio') or result.get('best_audio')
-                    result['_fallback']  = True
-                    return result
+                    
+                    if result.get('type') == 'video':
+                        # Merge if primary had metadata but no formats
+                        result['formats']    = fb_result['formats']
+                        result['best_video'] = fb_result.get('best_video') or result.get('best_video')
+                        result['best_audio'] = fb_result.get('best_audio') or result.get('best_audio')
+                        result['_fallback']  = True
+                        return result
+                    else:
+                        # Primary had an exception, return fallback result directly
+                        fb_result['_fallback'] = True
+                        return fb_result
             except Exception as fb_exc:
                 print(f"[ENGINE FALLBACK] Strategy {i} error: {fb_exc}")
 
