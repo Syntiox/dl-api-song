@@ -42,9 +42,9 @@ async def fetch_youtube_cookies():
         
         page = await context.new_page()
         
-        # VERY IMPORTANT FOR 512MB RAM: Block images, videos, fonts, and CSS to save massive amounts of RAM
+        # Temporarily allowing all resources so we can see the screenshot clearly
         async def route_intercept(route):
-            if route.request.resource_type in ["image", "media", "font", "stylesheet"]:
+            if route.request.resource_type in ["media"]:
                 await route.abort()
             else:
                 await route.continue_()
