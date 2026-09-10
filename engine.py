@@ -46,7 +46,8 @@ def _get_youtube_args() -> dict:
     # DO NOT set player_client here — yt-dlp's default picks the best clients
     # automatically and returns the most formats (including 1080p, 4K, etc.)
     # Forcing a specific client (e.g. tv_embedded) limits available formats.
-    yt_args: dict = {}
+    # tv_embedded client works on datacenter IPs (no PO token required)
+    yt_args: dict = {'player_client': ['tv_embedded', 'web']}
 
     # ── PO Token from remote provider URL ──
     provider_url = os.environ.get("POT_PROVIDER_URL")
@@ -278,7 +279,10 @@ def get_info(url: str) -> dict:
                     subprocess.run(["python", "fetch_cookies.py"], check=True)
                 except Exception as e:
                     print(f"[ENGINE COOKIE FETCH ERROR] {e}")
-                continue # Retry primary attempt
+                continue
+            else:
+                # Last attempt, empty formats → fall through to fallback chain
+                break
                 
         except Exception as exc:
             error_msg = str(exc)
@@ -334,4 +338,4 @@ def get_info(url: str) -> dict:
                 print(f"[ENGINE FALLBACK] Strategy {i} error: {fb_exc}")
 
         print("[ENGINE FALLBACK] All fallback strategies exhausted ❌")
-        return result
+        return result or {'type': 'error', 'message': 'All extraction strategies failed. YouTube is blocking this server IP.'}
