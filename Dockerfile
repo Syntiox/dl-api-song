@@ -38,6 +38,7 @@ RUN mkdir -p /etc/yt-dlp && \
     echo '--extractor-args youtubepot-bgutilhttp:base_url=http://localhost:4416' >> /etc/yt-dlp/yt-dlp.conf
 
 ENV YT_DLP_CONFIG=/etc/yt-dlp/yt-dlp.conf
+ENV PYTHONUNBUFFERED=1
 
 COPY . .
 
