@@ -475,3 +475,15 @@ async def stream_video(token: str = Query(...)):
         _streamer(), media_type=media_type,
         headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-store"},
     )
+
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/screenshot", tags=["Debug"])
+async def debug_screenshot():
+    """
+    Returns the latest Playwright screenshot if it exists.
+    """
+    if os.path.exists("screenshot.png"):
+        return FileResponse("screenshot.png")
+    return {"error": "Screenshot not found. Try fetching cookies first."}

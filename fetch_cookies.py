@@ -74,6 +74,13 @@ async def fetch_youtube_cookies():
         print("[Playwright] Extracting cookies...")
         cookies = await context.cookies()
         
+        print("[Playwright] Taking screenshot for debugging...")
+        try:
+            await page.screenshot(path="screenshot.png", full_page=True)
+            print("[Playwright] Screenshot saved to screenshot.png")
+        except Exception as e:
+            print(f"[Playwright] Failed to take screenshot: {e}")
+            
         await browser.close()
         
         if not cookies:
